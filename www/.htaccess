@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# 1. Map sitemap.xml to the sitemap feeder script
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+# 2. If the file exists physically (images, css, js), serve it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# 3. Otherwise, send all requests to index.php for framework routing
+RewriteRule ^(.*)$ index.php [QSA,L]

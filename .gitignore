@@ -1,0 +1,32 @@
+# Sensitive Files
+.env
+*.log
+logs/
+
+# System/Tooling Clutter
+.bash_history
+.bash_logout
+.bashrc
+.cache/
+.claude/
+.config/
+.copilot/
+.dotnet/
+.local/
+.profile
+.ssh/
+.vscode-server/
+.wget-hsts
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# PHP / Composer
+vendor/
+.phpunit.result.cache
+.php_cs.cache
+php_errors.log
+
+# Web Server specific
+public/storage

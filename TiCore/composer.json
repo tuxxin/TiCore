@@ -1,0 +1,18 @@
+{
+    "name": "tuxxin/ti-core",
+    "description": "PHP Framework",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Tuxxin\\TiCore\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "tuxxin"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^7.0"
+    }
+}
