@@ -2,6 +2,8 @@
 .env
 *.log
 logs/
+.gitconfig
+.git/
 
 # System/Tooling Clutter
 .bash_history
@@ -17,6 +19,8 @@ logs/
 .ssh/
 .vscode-server/
 .wget-hsts
+.claude.json
+ticore.tuxxin.com.code-workspace
 
 # OS Files
 .DS_Store
@@ -27,6 +31,3 @@ vendor/
 .phpunit.result.cache
 .php_cs.cache
 php_errors.log
-
-# Web Server specific
-public/storage
