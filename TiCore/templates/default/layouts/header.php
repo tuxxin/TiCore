@@ -13,6 +13,7 @@
 //   $og_image           string   Absolute URL to share image (1200×630 recommended)
 //   $og_image_width     int      Image width  in px  (default 1200)
 //   $og_image_height    int      Image height in px  (default 630)
+//   $og_image_alt       string   Alt text for og:image  (default: site name)
 //   $og_logo            string   Absolute URL to logo image
 //
 // OPEN GRAPH — video
@@ -59,6 +60,7 @@ $_tcCanonical   = isset($canonical) && $canonical !== ''
 $_tcOgImage       = isset($og_image)        && $og_image        !== '' ? $og_image        : $_tcBaseUrl . '/assets/images/TiCore-OG.webp';
 $_tcOgImageWidth  = isset($og_image_width)  && $og_image_width  !== '' ? (int)$og_image_width  : 1200;
 $_tcOgImageHeight = isset($og_image_height) && $og_image_height !== '' ? (int)$og_image_height : 630;
+$_tcOgImageAlt    = isset($og_image_alt)    && $og_image_alt    !== '' ? htmlspecialchars($og_image_alt, ENT_QUOTES, 'UTF-8') : htmlspecialchars($_tcSiteName, ENT_QUOTES, 'UTF-8');
 
 // Twitter
 $_tcTwitterCard = isset($twitter_card) && $twitter_card !== '' ? $twitter_card : 'summary_large_image';
@@ -154,6 +156,7 @@ $_e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     <meta property="og:image"        content="<?php echo $_e($_tcOgImage); ?>">
     <meta property="og:image:width"  content="<?php echo $_tcOgImageWidth; ?>">
     <meta property="og:image:height" content="<?php echo $_tcOgImageHeight; ?>">
+    <meta property="og:image:alt"    content="<?php echo $_tcOgImageAlt; ?>">
 
     <!-- ── Open Graph — logo ────────────────────────────────────────────── -->
     <?php $_tcEmitLogo = (isset($og_logo) && $og_logo !== '') ? $og_logo : $_tcSiteLogo; ?>

@@ -13,8 +13,8 @@
 
 TiCore is a secure, lightweight MVC framework for PHP 8.4+. It is the **only open-source PHP
 framework with a complete SEO suite built into the layout** — canonical URLs, Open Graph,
-Twitter/X cards, Schema.org JSON-LD, og:video, og:logo, fb:app_id, and Google Analytics 4,
-all auto-generated with zero extra packages.
+Twitter/X cards, Schema.org JSON-LD, og:video, og:logo, fb:app_id, Google Analytics 4, and
+auto-generating sitemap.xml, all included with zero extra packages.
 
 Application logic lives entirely **outside the public web root** — only `www/` is web-accessible.
 
@@ -36,6 +36,7 @@ to configure, nothing to forget.
 | Schema.org JSON-LD | ✅ | ❌ | ❌ | ❌ | ❌ |
 | og:video / og:logo | ✅ | ❌ | ❌ | ❌ | ❌ |
 | Google Analytics 4 | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Auto sitemap.xml | ✅ | ⚠️ pkg | ⚠️ pkg | ⚠️ pkg | ❌ |
 | WCAG accessibility | ✅ | ❌ | ❌ | ❌ | ❌ |
 | Zero-config pages  | ✅ | ❌ | ❌ | ❌ | ❌ |
 | SEO packages needed | **0** | ❌ | ❌ | ❌ | ❌ |
@@ -47,7 +48,7 @@ to configure, nothing to forget.
 - **Security first** — CSRF tokens, XSS output escaping (`e()`), all logic outside web root
 - **Smart four-tier router** — manual → auto-controller → PageController fallback → 404
 - **Six-level logger** — CRITICAL / ERROR / WARNING / INFO / DEPRECATED / DEBUG (0–5)
-- **Complete SEO suite** — full meta, OG, Twitter/X, JSON-LD auto-generated from layout
+- **Complete SEO suite** — full meta, OG, Twitter/X, JSON-LD, sitemap.xml auto-generated from layout
 - **Optional PDO database** — enable with one flag; prepared statements, utf8mb4
 - **Zero-config pages** — drop a view file, get a live URL instantly via PageController
 - **WCAG accessible** — skip link, ARIA landmarks, `role` attributes in default templates
