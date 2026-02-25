@@ -291,6 +291,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <a <?php echo $_tcNavAttrs('/features'); ?> href="/features">Features</a>
                     </li>
                     <li class="nav-item" role="listitem">
+                        <a <?php echo $_tcNavAttrs('/compare'); ?> href="/compare">Compare</a>
+                    </li>
+                    <li class="nav-item" role="listitem">
                         <button type="button" class="nav-link"
                                 data-bs-toggle="modal"
                                 data-bs-target="#tcGithubModal"
