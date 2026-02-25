@@ -9,9 +9,9 @@ $meta_robots      = 'index, follow';
 <section aria-labelledby="compare-heading" class="mb-5">
     <h1 id="compare-heading" class="display-6 fw-bold">Framework Comparison</h1>
     <p class="lead text-muted">
-        How TiCore stacks up against the most widely-used PHP frameworks on features that matter
-        for production — particularly the built-in SEO and accessibility capabilities that no other
-        framework ships out of the box.
+        How TiCore (<em>Tuxxin Integrated Core</em>) stacks up against the most widely-used PHP
+        frameworks on features that matter for production — particularly the built-in SEO and
+        accessibility capabilities that no other framework ships out of the box.
     </p>
     <p class="text-muted small">
         &#9989; Built-in &nbsp;|&nbsp;

@@ -291,6 +291,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <a <?php echo $_tcNavAttrs('/features'); ?> href="/features">Features</a>
                     </li>
                     <li class="nav-item" role="listitem">
+                        <button type="button" class="nav-link"
+                                data-bs-toggle="modal"
+                                data-bs-target="#tcGithubModal"
+                                aria-haspopup="dialog"
+                                aria-label="View TiCore on GitHub">
+                            GitHub
+                        </button>
+                    </li>
+                    <li class="nav-item" role="listitem">
                         <a class="nav-link"
                            href="https://tuxxin.com"
                            target="_blank"

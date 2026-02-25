@@ -3,10 +3,11 @@
 <!-- ── Hero ────────────────────────────────────────────────────────────────── -->
 <section aria-labelledby="hero-heading" class="p-5 mb-5 bg-dark text-white rounded-3">
     <div class="container-fluid py-4">
-        <h1 id="hero-heading" class="display-5 fw-bold mb-3">
+        <h1 id="hero-heading" class="display-5 fw-bold mb-1">
             TiCore PHP Framework
             <small class="fs-5 fw-normal text-secondary ms-2">v<?php echo e($framework_version); ?></small>
         </h1>
+        <p class="text-secondary small mb-3"><em>Tuxxin Integrated Core</em></p>
         <p class="col-md-9 fs-5 mb-3">
             The only open-source PHP framework with a <strong>complete SEO suite built in</strong> —
             canonical URLs, Open Graph, Twitter/X cards, Schema.org JSON-LD, og:video, og:logo,

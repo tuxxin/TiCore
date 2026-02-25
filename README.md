@@ -11,7 +11,7 @@
 
 ## Overview
 
-TiCore is a secure, lightweight MVC framework for PHP 8.4+. It is the **only open-source PHP
+TiCore (**Tuxxin Integrated Core**) is a secure, lightweight MVC framework for PHP 8.4+. It is the **only open-source PHP
 framework with a complete SEO suite built into the layout** — canonical URLs, Open Graph,
 Twitter/X cards, Schema.org JSON-LD, og:video, og:logo, fb:app_id, Google Analytics 4, and
 auto-generating sitemap.xml, all included with zero extra packages.
