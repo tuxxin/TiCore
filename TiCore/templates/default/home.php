@@ -177,7 +177,7 @@
                 Writing a dedicated controller for each is unnecessary boilerplate.
             </p>
             <p class="card-text">
-                <strong>PageController</strong> solves this. The Router's Case D fallback checks
+                <strong>PageController</strong> solves this. The Router's Case C fallback checks
                 whether a view file named after the URI exists in
                 <code>templates/default/</code>. If it does, <code>PageController::show()</code>
                 renders it automatically — no controller file needed.
