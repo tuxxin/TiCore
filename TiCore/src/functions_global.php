@@ -3,14 +3,15 @@
 
 function view($viewName, $data = []) {
     // Extract array keys as variables (e.g. ['title'=>'Hi'] becomes $title)
-    extract($data);
+    // EXTR_SKIP prevents caller-supplied keys from overwriting existing variables
+    extract($data, EXTR_SKIP);
     
     $path = CORE_PATH . '/templates/default/' . $viewName . '.php';
     
     if (file_exists($path)) {
         require $path;
     } else {
-        echo "View file not found: $viewName";
+        echo 'View not found: ' . htmlspecialchars($viewName, ENT_QUOTES, 'UTF-8');
     }
 }
 

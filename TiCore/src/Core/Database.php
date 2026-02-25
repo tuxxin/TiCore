@@ -20,8 +20,9 @@ class Database {
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
         } catch (PDOException $e) {
-            // In production, log this instead of echoing
-            die("Database Connection Failed: " . $e->getMessage());
+            Logger::critical('Database connection failed: ' . $e->getMessage());
+            http_response_code(503);
+            die('Service temporarily unavailable.');
         }
     }
 }

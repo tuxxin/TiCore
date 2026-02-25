@@ -1,3 +1,8 @@
+<?php
+// Tell crawlers not to index this error page
+$title        = 'Page Not Found';
+$meta_robots  = 'noindex, nofollow';
+?>
 <?php include 'layouts/header.php'; ?>
 
 <div class="text-center py-5">

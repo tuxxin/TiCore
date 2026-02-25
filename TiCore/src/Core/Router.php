@@ -15,6 +15,12 @@ class Router {
         $uri = trim(parse_url($uri, PHP_URL_PATH), '/');
         if ($uri === '') $uri = 'home'; // Default to home
 
+        // Reject URIs that could traverse directories or contain unexpected chars
+        if (!preg_match('/^[a-z0-9][a-z0-9\-]*$/i', $uri)) {
+            http_response_code(400);
+            return;
+        }
+
         // CASE A: Manual Routes
         if (array_key_exists($uri, $this->routes)) {
             $this->callController($this->routes[$uri]);
@@ -33,7 +39,7 @@ class Router {
             return;
         }
 
-        // CASE D (Fallback): No Controller, but View exists? (e.g., /about -> about.php)
+        // CASE C (Fallback): No Controller, but View exists? (e.g., /compare -> compare.php)
         $viewPath = CORE_PATH . '/templates/default/' . $uri . '.php';
         if (file_exists($viewPath)) {
             require_once CORE_PATH . '/src/Controllers/PageController.php';
