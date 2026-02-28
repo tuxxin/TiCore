@@ -191,4 +191,7 @@ GA4 (`GA4_ID`), canonical URL, og:logo, and Schema.org JSON-LD are always genera
 
 ---
 
+sudo mkdir /your_path/TiCore/logs
+sudo chmod -R g+w /your_path/TiCore/logs
+
 *TiCore Framework — Built by [Tuxxin](https://tuxxin.com) | [Live Demo](https://ticore.tuxxin.com)*
