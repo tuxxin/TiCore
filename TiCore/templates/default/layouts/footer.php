@@ -97,6 +97,7 @@ $_tcVersion = file_exists(CORE_PATH . '/.v') ? trim(file_get_contents(CORE_PATH 
     function resetModal() {
         countEl.textContent = DURATION;
         progressEl.style.width = '100%';
+        progressEl.setAttribute('aria-valuenow', '100');
     }
 
     modalEl.addEventListener('shown.bs.modal', function () {
@@ -104,8 +105,10 @@ $_tcVersion = file_exists(CORE_PATH . '/.v') ? trim(file_get_contents(CORE_PATH 
         resetModal();
         timer = setInterval(function () {
             seconds--;
+            var pct = Math.round(seconds / DURATION * 100);
             countEl.textContent = seconds;
-            progressEl.style.width = (seconds / DURATION * 100) + '%';
+            progressEl.style.width = pct + '%';
+            progressEl.setAttribute('aria-valuenow', pct);
             if (seconds <= 0) {
                 stopTimer();
                 openGitHub();

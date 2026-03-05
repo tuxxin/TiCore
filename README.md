@@ -1,6 +1,6 @@
 # TiCore Framework
 
-**Version:** 1.24
+**Version:** 1.25
 **PHP:** 8.4+
 **License:** MIT
 **Author:** [Tuxxin](https://tuxxin.com)
@@ -52,7 +52,6 @@ to configure, nothing to forget.
 - **Optional PDO database** — enable with one flag; prepared statements, utf8mb4
 - **Zero-config pages** — drop a view file, get a live URL instantly via PageController
 - **WCAG accessible** — skip link, ARIA landmarks, `role` attributes in default templates
-- **PHPMailer 7** — bundled via Composer for transactional email
 - **Environment-aware errors** — full stack traces in development, silent in production
 
 ---
@@ -186,12 +185,56 @@ GA4 (`GA4_ID`), canonical URL, og:logo, and Schema.org JSON-LD are always genera
 
 - PHP 8.4+
 - Apache with `mod_rewrite`
-- Composer (for PHPMailer)
+- Composer (autoloader)
 - MySQL / MariaDB (optional)
 
 ---
 
-sudo mkdir /your_path/TiCore/logs
-sudo chmod -R g+w /your_path/TiCore/logs
+## Installation
+
+1. **Clone or download** the repository into your server directory.
+
+2. **Install Composer dependencies:**
+
+```bash
+cd TiCore
+composer install
+```
+
+3. **Create and configure the environment file:**
+
+```bash
+cp TiCore/.env-example TiCore/.env
+```
+
+Then edit `TiCore/.env` and set your values:
+
+```env
+APP_ENV=production
+LOG_LEVEL=1
+DB_HOST=localhost
+DB_NAME=your_db
+DB_USER=your_user
+DB_PASS=your_password
+```
+
+4. **Update site constants** in `TiCore/config.php`:
+
+```php
+define('SITE_TITLE', 'Your Site Name');
+define('BASE_URL',   'https://yoursite.com');
+define('GA4_ID',     'G-XXXXXXXXXX');
+```
+
+5. **Create the logs directory** and make it writable by the web server:
+
+```bash
+mkdir -p TiCore/logs
+chmod 775 TiCore/logs
+```
+
+6. **Point your web server** document root to the `www/` directory. The `TiCore/` directory must never be web-accessible.
+
+---
 
 *TiCore Framework — Built by [Tuxxin](https://tuxxin.com) | [Live Demo](https://ticore.tuxxin.com)*

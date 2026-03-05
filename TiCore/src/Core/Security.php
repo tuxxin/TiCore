@@ -13,10 +13,14 @@ class Security {
     }
 
     // 2. Verify CSRF Token
-    public static function verifyCsrfToken($token) {
+    public static function verifyCsrfToken(string $token): bool {
         if (session_status() === PHP_SESSION_NONE) session_start();
         if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'];
+            // Use only the first IP from X-Forwarded-For to avoid logging spoofed proxy chains
+            $forwarded = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '';
+            $ip = $forwarded !== ''
+                ? trim(explode(',', $forwarded)[0])
+                : $_SERVER['REMOTE_ADDR'];
             Logger::error("CSRF Token Mismatch from IP: " . $ip);
             http_response_code(403);
             die("Invalid Request (CSRF match failed)");
@@ -25,7 +29,7 @@ class Security {
     }
 
     // 3. XSS Protection (Output Sanitization)
-    public static function e($string) {
+    public static function e(string $string): string {
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
     }
 }

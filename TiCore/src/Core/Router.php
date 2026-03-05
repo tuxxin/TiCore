@@ -53,9 +53,12 @@ class Router {
         view('404', ['title' => 'Page Not Found']);
     }
 
-    protected function callController($name) {
-        // Support for "Controller@method" syntax if needed later
-        // For now, assuming Class -> index()
+    protected function callController(string $name): void {
+        // Validate name to prevent path traversal via manually registered routes
+        if (!preg_match('/^[A-Za-z][A-Za-z0-9]*Controller$/', $name)) {
+            http_response_code(400);
+            return;
+        }
         require_once CORE_PATH . '/src/Controllers/' . $name . '.php';
         $class = "TiCore\\Controllers\\$name";
         $controller = new $class();

@@ -12,7 +12,5 @@
             "name": "tuxxin"
         }
     ],
-    "require": {
-        "phpmailer/phpmailer": "^7.0"
-    }
+    "require": {}
 }

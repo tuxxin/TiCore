@@ -37,7 +37,7 @@ class Logger {
      * @param mixed  $message   String, array, or object to log.
      * @param int    $levelNum  One of the LEVEL_* constants (default INFO).
      */
-    public static function log($message, int $levelNum = self::LEVEL_INFO): void {
+    public static function log(mixed $message, int $levelNum = self::LEVEL_INFO): void {
         $configuredLevel = defined('LOG_LEVEL') ? (int)LOG_LEVEL : self::LEVEL_ERROR;
 
         // Skip messages above the configured threshold
@@ -61,7 +61,7 @@ class Logger {
             mkdir($logDir, 0755, true);
         }
 
-        file_put_contents($logFile, $entry, FILE_APPEND);
+        file_put_contents($logFile, $entry, FILE_APPEND | LOCK_EX);
     }
 
     // ── Convenience methods ─────────────────────────────────────────────────

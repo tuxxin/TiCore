@@ -5,7 +5,7 @@ use PDO;
 use PDOException;
 
 class Database {
-    public $pdo = null;
+    public ?PDO $pdo = null;
 
     public function __construct() {
         if (!defined('DB_ENABLED') || DB_ENABLED === false) {

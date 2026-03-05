@@ -18,7 +18,7 @@ define('BASE_URL',      'https://ticore.tuxxin.com');
 define('SITE_LOGO',     BASE_URL . '/assets/images/logo-v2.png');
 define('FACEBOOK_URL',  'https://facebook.com/tuxxin');
 define('GA4_ID',        'G-9RF6FP6ZGX');
-define('SITEMAP_ENABLED', false); // Toggle this to false to hide sitemap.xml
+define('SITEMAP_ENABLED', true); // Toggle this to false to hide sitemap.xml
 
 // 5. Database Settings
 define('DB_ENABLED', false);

@@ -1,5 +1,4 @@
 <?php include 'layouts/header.php'; ?>
-
 <!-- ── Hero ────────────────────────────────────────────────────────────────── -->
 <section aria-labelledby="hero-heading" class="p-5 mb-5 bg-dark text-white rounded-3">
     <div class="container-fluid py-4">
@@ -225,7 +224,6 @@
         <div class="col-md-6">
             <ul class="list-group list-group-flush" role="list">
                 <li class="list-group-item" role="listitem">&#128196; Six-level structured logger (0–5)</li>
-                <li class="list-group-item" role="listitem">&#128233; PHPMailer 7 included via Composer</li>
                 <li class="list-group-item" role="listitem">&#128269; Automatic SEO sitemap (optional)</li>
                 <li class="list-group-item" role="listitem">&#9881;&#65039; Zero-config static page rendering</li>
             </ul>

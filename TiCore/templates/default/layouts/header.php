@@ -87,6 +87,26 @@ $_tcNavAttrs = static function (string $href) use ($_tcCurrentPath): string {
 
 // Escape helper (shorthand for this file)
 $_e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
+
+// ── Tuxxin Suite nav — fetched from JSON, cached 1 hour ──────────────────────
+$_tcSuiteCache = sys_get_temp_dir() . '/tuxxin_suite_nav.json';
+$_tcSuiteItems = [];
+if (file_exists($_tcSuiteCache) && (time() - filemtime($_tcSuiteCache)) < 3600) {
+    $_tcSuiteItems = json_decode(file_get_contents($_tcSuiteCache), true) ?: [];
+} else {
+    $_tcSuiteCtx = stream_context_create(['http' => ['timeout' => 3]]);
+    $_tcSuiteRaw = @file_get_contents('https://tuxxin.com/tuxxin_suite.json', false, $_tcSuiteCtx);
+    if ($_tcSuiteRaw) {
+        $_tcSuiteItems = json_decode($_tcSuiteRaw, true) ?: [];
+        file_put_contents($_tcSuiteCache, $_tcSuiteRaw);
+    }
+}
+$_tcNavItemAttrs = static function (array $attrs): string {
+    return implode(' ', array_map(
+        fn($k, $v) => htmlspecialchars($k, ENT_QUOTES, 'UTF-8') . '="' . htmlspecialchars($v, ENT_QUOTES, 'UTF-8') . '"',
+        array_keys($attrs), $attrs
+    ));
+};
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -151,6 +171,7 @@ $_e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     <meta property="og:title"       content="<?php echo $_tcPageTitle; ?>">
     <meta property="og:description" content="<?php echo $_tcDescription; ?>">
     <meta property="og:url"         content="<?php echo $_e($_tcCanonical); ?>">
+    <meta property="og:locale"      content="en_US">
 
     <!-- ── Open Graph — image ───────────────────────────────────────────── -->
     <meta property="og:image"        content="<?php echo $_e($_tcOgImage); ?>">
@@ -183,6 +204,7 @@ $_e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     <meta name="twitter:title"       content="<?php echo $_tcPageTitle; ?>">
     <meta name="twitter:description" content="<?php echo $_tcDescription; ?>">
     <meta name="twitter:image"       content="<?php echo $_e($_tcOgImage); ?>">
+    <meta name="twitter:image:alt"   content="<?php echo $_tcOgImageAlt; ?>">
 
     <!-- ── Structured data (Schema.org JSON-LD) ─────────────────────────── -->
     <script type="application/ld+json">
@@ -224,6 +246,9 @@ $_e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     ?>
     </script>
 
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8156109007911677"
+     crossorigin="anonymous"></script>
+
     <!-- ── Favicon ──────────────────────────────────────────────────────── -->
     <link rel="icon"             href="/assets/images/TiCore-Fav.png" type="image/png">
     <link rel="apple-touch-icon" href="/assets/images/TiCore-Fav.png" type="image/png">
@@ -237,9 +262,9 @@ $_e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     <?php if (isset($google_fonts_url) && $google_fonts_url !== ''): ?>
     <link href="<?php echo $_e($google_fonts_url); ?>" rel="stylesheet">
     <?php endif; ?>
+
 </head>
 <body>
-
 <?php if (isset($gtm_id) && $gtm_id !== ''): ?>
 <!-- ── Google Tag Manager (noscript fallback) ───────────────────────────────── -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo $_e($gtm_id); ?>"
@@ -302,14 +327,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             GitHub
                         </button>
                     </li>
-                    <li class="nav-item" role="listitem">
-                        <a class="nav-link"
-                           href="https://tuxxin.com"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           aria-label="Back to Tuxxin.com (opens in new tab)">
-                            Back to Tuxxin.com &rarr;
+                    <li class="nav-item dropdown" role="listitem">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           id="tuxxinSuiteDropdown"
+                           role="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Tuxxin Suite
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="tuxxinSuiteDropdown">
+                            <?php foreach ($_tcSuiteItems as $_tcSuiteItem): ?>
+                                <?php if (($_tcSuiteItem['type'] ?? '') === 'divider'): ?>
+                                    <li><hr class="dropdown-divider"></li>
+                                <?php elseif (($_tcSuiteItem['type'] ?? '') === 'link'): ?>
+                                    <?php
+                                    $_tcSuiteAttrs     = $_tcSuiteItem['attributes'] ?? [];
+                                    $_tcSuiteHref      = htmlspecialchars($_tcSuiteItem['href'] ?? '#', ENT_QUOTES, 'UTF-8');
+                                    $_tcSuiteText      = htmlspecialchars(html_entity_decode($_tcSuiteItem['text'] ?? '', ENT_HTML5, 'UTF-8'), ENT_QUOTES, 'UTF-8');
+                                    $_tcSuiteIsCurrent = rtrim($_tcSuiteItem['href'] ?? '', '/') === rtrim($_tcBaseUrl, '/');
+                                    if ($_tcSuiteIsCurrent) {
+                                        $_tcSuiteAttrs['class'] = 'dropdown-item active';
+                                        unset($_tcSuiteAttrs['target'], $_tcSuiteAttrs['rel']);
+                                        $_tcSuiteHref = '/';
+                                    }
+                                    ?>
+                                    <li>
+                                        <a <?= $_tcNavItemAttrs($_tcSuiteAttrs) ?> href="<?= $_tcSuiteHref ?>">
+                                            <?= $_tcSuiteText ?>
+                                            <?php if ($_tcSuiteIsCurrent): ?><span class="visually-hidden">(current)</span><?php endif; ?>
+                                        </a>
+                                    </li>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                            <?php if (empty($_tcSuiteItems)): ?>
+                                <li><a class="dropdown-item" href="https://tuxxin.com" target="_blank" rel="noopener noreferrer">Back to Tuxxin.com &rarr;</a></li>
+                            <?php endif; ?>
+                        </ul>
                     </li>
                 </ul>
             </div>

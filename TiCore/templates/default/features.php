@@ -1,5 +1,4 @@
 <?php include 'layouts/header.php'; ?>
-
 <!-- ── Page header ─────────────────────────────────────────────────────────── -->
 <section aria-labelledby="page-heading" class="mb-5">
     <h1 id="page-heading" class="display-6 fw-bold">
