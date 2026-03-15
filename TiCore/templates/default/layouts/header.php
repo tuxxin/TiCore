@@ -66,9 +66,6 @@ $_tcOgImageAlt    = isset($og_image_alt)    && $og_image_alt    !== '' ? htmlspe
 $_tcTwitterCard = isset($twitter_card) && $twitter_card !== '' ? $twitter_card : 'summary_large_image';
 $_tcTwitterSite = isset($twitter_site) && $twitter_site !== '' ? $twitter_site : '@tuxxin';
 
-// Framework version for JSON-LD / meta generator
-$_tcVersion = file_exists(CORE_PATH . '/.v') ? trim(file_get_contents(CORE_PATH . '/.v')) : '';
-
 // Site logo, Facebook URL, GA4 (from config constants)
 $_tcSiteLogo    = defined('SITE_LOGO')    && SITE_LOGO    !== '' ? SITE_LOGO    : '';
 $_tcFacebookUrl = defined('FACEBOOK_URL') && FACEBOOK_URL !== '' ? FACEBOOK_URL : '';
@@ -115,23 +112,28 @@ $_tcNavItemAttrs = static function (array $attrs): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- ── DNS prefetch / preconnect ────────────────────────────────────── -->
-    <!--  jsdelivr is always used for Bootstrap -->
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
     <?php if (isset($google_fonts_url) && $google_fonts_url !== ''): ?>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <?php endif; ?>
 
     <?php if (isset($fb_app_id) && $fb_app_id !== ''): ?>
-    <link rel="preconnect" href="https://connect.facebook.net">
+    <link rel="preconnect" href="https://connect.facebook.net" crossorigin>
+    <link rel="dns-prefetch" href="https://connect.facebook.net">
     <?php endif; ?>
 
     <?php if ((isset($gtm_id) && $gtm_id !== '') || $_tcGa4Id !== ''): ?>
-    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <?php endif; ?>
     <?php if ($_tcGa4Id !== ''): ?>
-    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <?php endif; ?>
 
     <!-- ── Google Tag Manager (head snippet) ────────────────────────────── -->
@@ -154,7 +156,7 @@ $_tcNavItemAttrs = static function (array $attrs): string {
     <meta name="description" content="<?php echo $_tcDescription; ?>">
     <meta name="robots"      content="<?php echo $_e($_tcRobots); ?>">
     <meta name="author"      content="Tuxxin — tuxxin.com">
-    <meta name="generator"   content="TiCore <?php echo $_e($_tcVersion); ?>">
+    <meta name="generator"   content="TiCore">
     <meta name="theme-color" content="#212529">
 
     <!-- ── Canonical ────────────────────────────────────────────────────── -->
@@ -175,6 +177,7 @@ $_tcNavItemAttrs = static function (array $attrs): string {
 
     <!-- ── Open Graph — image ───────────────────────────────────────────── -->
     <meta property="og:image"        content="<?php echo $_e($_tcOgImage); ?>">
+    <meta property="og:image:type"   content="image/webp">
     <meta property="og:image:width"  content="<?php echo $_tcOgImageWidth; ?>">
     <meta property="og:image:height" content="<?php echo $_tcOgImageHeight; ?>">
     <meta property="og:image:alt"    content="<?php echo $_tcOgImageAlt; ?>">
@@ -246,14 +249,14 @@ $_tcNavItemAttrs = static function (array $attrs): string {
     ?>
     </script>
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8156109007911677"
-     crossorigin="anonymous"></script>
-
     <!-- ── Favicon ──────────────────────────────────────────────────────── -->
     <link rel="icon"             href="/assets/images/TiCore-Fav.png" type="image/png">
     <link rel="apple-touch-icon" href="/assets/images/TiCore-Fav.png" type="image/png">
 
     <!-- ── Stylesheets ──────────────────────────────────────────────────── -->
+    <link rel="preload"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          as="style">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
@@ -262,6 +265,10 @@ $_tcNavItemAttrs = static function (array $attrs): string {
     <?php if (isset($google_fonts_url) && $google_fonts_url !== ''): ?>
     <link href="<?php echo $_e($google_fonts_url); ?>" rel="stylesheet">
     <?php endif; ?>
+
+    <!-- ── Google AdSense ───────────────────────────────────────────────── -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8156109007911677"
+     crossorigin="anonymous"></script>
 
 </head>
 <body>

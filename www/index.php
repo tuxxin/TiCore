@@ -69,7 +69,7 @@ set_error_handler(function (int $errno, string $errstr, string $errfile, int $er
         E_USER_NOTICE       => \TiCore\Core\Logger::LEVEL_WARNING,
         E_DEPRECATED        => \TiCore\Core\Logger::LEVEL_DEPRECATED,
         E_USER_DEPRECATED   => \TiCore\Core\Logger::LEVEL_DEPRECATED,
-        E_STRICT            => \TiCore\Core\Logger::LEVEL_DEBUG,
+        // E_STRICT removed in PHP 8.4
     ];
 
     $logLevel = $levelMap[$errno] ?? \TiCore\Core\Logger::LEVEL_WARNING;

@@ -58,7 +58,7 @@ class Logger {
 
         $logDir = dirname($logFile);
         if (!is_dir($logDir)) {
-            mkdir($logDir, 0755, true);
+            mkdir($logDir, 0750, true);
         }
 
         file_put_contents($logFile, $entry, FILE_APPEND | LOCK_EX);
