@@ -1,0 +1,33 @@
+{
+  "slug": "rest-api-kit",
+  "name": "TiCore REST API Kit",
+  "version": "1.0.0",
+  "description": "Self-contained REST API toolkit: hashed API keys (shown once), X-Api-Key auth middleware with per-IP token-bucket rate limiting, a versioned /api/v2 group, an admin key manager, and a server-side proxy console so keys never reach the browser. SQLite-backed.",
+  "author": "tuxxin",
+  "license": "MIT",
+  "ticore": ">=2.0.0",
+  "php": ">=8.1",
+  "requires_db": false,
+  "autoload": { "Tuxxin\\TiCore\\Addons\\RestApiKit\\": "src/" },
+  "bootstrap": "Tuxxin\\TiCore\\Addons\\RestApiKit\\RestApiKitAddon",
+  "routes": { "web": "routes/web.php", "api": "routes/api.php" },
+  "middleware": {
+    "apikey": "Tuxxin\\TiCore\\Addons\\RestApiKit\\Middleware\\ApiKeyAuth"
+  },
+  "views": { "namespace": "rest-api-kit", "path": "views" },
+  "config": { "file": "config/rest-api-kit.php" },
+  "env": { "optional": ["RESTAPIKIT_DB_PATH", "RESTAPIKIT_CONSOLE_KEY"] },
+  "files": [
+    "addon.json",
+    "config/rest-api-kit.php",
+    "src/RestApiKitAddon.php",
+    "src/ApiKeys.php",
+    "src/Middleware/ApiKeyAuth.php",
+    "src/Controllers/ApiController.php",
+    "src/Controllers/ApiAdminController.php",
+    "routes/api.php",
+    "routes/web.php",
+    "views/keys.php",
+    "views/console.php"
+  ]
+}

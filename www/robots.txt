@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ticore.tuxxin.com/sitemap.xml
+# Set this to your own domain's sitemap:
+Sitemap: https://example.com/sitemap.xml

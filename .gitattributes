@@ -1,0 +1,13 @@
+# Keep developer/source-only paths OUT of release tarballs + Composer "dist".
+# (A normal `git clone` still includes them — the `ticore` CLI is the supported
+#  per-addon install path; releases/Composer get the base only.)
+/addons         export-ignore
+/.github        export-ignore
+/tests          export-ignore
+/docs           export-ignore
+*.md            export-ignore
+.gitattributes  export-ignore
+.gitignore      export-ignore
+
+# Normalize shipped PHP line endings.
+*.php text eol=lf

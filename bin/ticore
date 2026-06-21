@@ -1,0 +1,152 @@
+#!/usr/bin/env php
+<?php
+/**
+ * ticore — TiCore CLI.
+ *   ticore addon list                 list installed addons
+ *   ticore addon add <slug>           fetch an addon from the public repo (base excluded)
+ *   ticore addon remove <slug>        delete an installed addon
+ *   ticore key:generate               print a 32-byte hex secret
+ *   ticore secrets:scan               scan the project for committable secrets (pre-push)
+ *   ticore migrate                    run addon migrations (or note self-migrating addons)
+ *   ticore help
+ *
+ * No dependencies. Run from anywhere inside a TiCore project.
+ */
+
+const REPO   = 'tuxxin/TiCore';   // source of addons
+const BRANCH = 'HEAD';
+
+$argv0 = array_shift($argv); // script
+$cmd   = array_shift($argv) ?? 'help';
+$sub   = $argv[0] ?? null;
+
+$root = ticore_root(getcwd());
+function ticore_root(string $dir): ?string {
+    if ($e = getenv('TICORE_ROOT')) return rtrim($e, '/');
+    $d = $dir;
+    while ($d && $d !== '/') {
+        if (is_file($d . '/TiCore/config.php')) return $d;
+        $d = dirname($d);
+    }
+    return null;
+}
+function out(string $s = ''): void { fwrite(STDOUT, $s . "\n"); }
+function err(string $s): void { fwrite(STDERR, "\033[31m" . $s . "\033[0m\n"); }
+function ok(string $s): void  { out("\033[32m" . $s . "\033[0m"); }
+
+switch ("$cmd" . ($sub !== null && $cmd === 'addon' ? " $sub" : '')) {
+
+case 'addon list':
+    if (!$root) { err('Not inside a TiCore project.'); exit(1); }
+    $dir = $root . '/TiCore/addons';
+    $found = glob($dir . '/*/addon.json') ?: [];
+    if (!$found) { out('No addons installed. Try: ticore addon add auth'); break; }
+    out("Installed addons:");
+    foreach ($found as $mf) {
+        $m = json_decode((string) file_get_contents($mf), true) ?: [];
+        out(sprintf("  %-22s v%-8s %s", $m['slug'] ?? '?', $m['version'] ?? '?', $m['description'] ?? ''));
+    }
+    break;
+
+case 'addon add':
+    if (!$root) { err('Not inside a TiCore project.'); exit(1); }
+    $slug = $argv[1] ?? '';
+    if (!preg_match('/^[a-z0-9][a-z0-9\-]*$/', $slug)) { err('Usage: ticore addon add <slug>'); exit(1); }
+    $dest = $root . '/TiCore/addons/' . $slug;
+    if (is_dir($dest)) { err("Addon '$slug' already installed (use 'addon remove' first)."); exit(1); }
+    $base = "https://raw.githubusercontent.com/" . REPO . "/" . BRANCH . "/addons/$slug";
+    out("Fetching $slug from " . REPO . " …");
+    $manifestRaw = @file_get_contents("$base/addon.json");
+    $manifest = $manifestRaw ? json_decode($manifestRaw, true) : null;
+    if (!is_array($manifest) || empty($manifest['files'])) {
+        err("Could not fetch addon '$slug' (not found in repo, or no files[] manifest).");
+        exit(1);
+    }
+    @mkdir($dest, 0775, true);
+    foreach ($manifest['files'] as $rel) {
+        $data = @file_get_contents("$base/$rel");
+        if ($data === false) { err("  ! failed: $rel"); continue; }
+        $target = "$dest/$rel";
+        @mkdir(dirname($target), 0775, true);
+        file_put_contents($target, $data);
+        out("  + $rel");
+    }
+    ok("Installed '$slug'. Run 'ticore migrate' if it has migrations.");
+    break;
+
+case 'addon remove':
+    if (!$root) { err('Not inside a TiCore project.'); exit(1); }
+    $slug = $argv[1] ?? '';
+    if (!preg_match('/^[a-z0-9][a-z0-9\-]*$/', $slug)) { err('Usage: ticore addon remove <slug>'); exit(1); }
+    $dest = $root . '/TiCore/addons/' . $slug;
+    if (!is_dir($dest)) { err("Addon '$slug' is not installed."); exit(1); }
+    exec('rm -rf ' . escapeshellarg($dest));
+    ok("Removed '$slug'. (DB tables, if any, are left intact.)");
+    break;
+
+case 'key:generate':
+    out(bin2hex(random_bytes(32)));
+    break;
+
+case 'secrets:scan':
+    $scanRoot = $root ?? getcwd();
+    out("Scanning $scanRoot for committable secrets …");
+    $patterns = [
+        'GitHub PAT'        => '/ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{50,}/',
+        'Stripe secret'     => '/sk_live_[0-9a-zA-Z]{16,}|whsec_[0-9a-zA-Z]{16,}/',
+        'AWS key'           => '/AKIA[0-9A-Z]{16}/',
+        'Google API key'    => '/AIza[0-9A-Za-z_\-]{35}/',
+        'GCP private key'   => '/"private_key"\s*:/',
+        'PEM private key'   => '/-----BEGIN [A-Z ]*PRIVATE KEY-----/',
+        'AdSense pub id'    => '/ca-pub-[0-9]{16}/',
+        'Inline credential' => '/(API_KEY|SECRET|TOKEN|PASSWORD|DB_PASS)\s*=\s*["\']?[A-Za-z0-9\/+_\-]{12,}/',
+    ];
+    $skipDir = ['.git', 'vendor', 'logs', 'node_modules', 'database'];
+    $skipFile = '/\.(env.*|sqlite|sqlite3|db|log)$/i';   // gitignored / not committed
+    $hits = 0;
+    $it = new RecursiveIteratorIterator(
+        new RecursiveCallbackFilterIterator(
+            new RecursiveDirectoryIterator($scanRoot, FilesystemIterator::SKIP_DOTS),
+            function ($f) use ($skipDir) {
+                return !($f->isDir() && in_array($f->getFilename(), $skipDir, true));
+            }
+        )
+    );
+    foreach ($it as $f) {
+        if (!$f->isFile()) continue;
+        $path = $f->getPathname();
+        if (preg_match($skipFile, $path)) continue;
+        if ($f->getSize() > 2_000_000) continue;
+        $txt = (string) @file_get_contents($path);
+        foreach ($patterns as $label => $re) {
+            if (preg_match($re, $txt)) {
+                // allow obvious placeholders
+                if (preg_match('/(change_me|XXXX|placeholder|example|your-?|<[^>]+>)/i', $txt) && $label === 'Inline credential') continue;
+                err("  ⚠ $label  →  " . substr($path, strlen($scanRoot) + 1));
+                $hits++;
+            }
+        }
+    }
+    if ($hits) { err("$hits potential secret(s) found — review before pushing."); exit(1); }
+    ok('secrets:scan clean ✓');
+    break;
+
+case 'migrate':
+    if (!$root) { err('Not inside a TiCore project.'); exit(1); }
+    $mig = glob($root . '/TiCore/addons/*/migrations/*.php') ?: [];
+    if (!$mig) { out('No addon migration files. (Addons like auth self-create their tables on first boot.)'); break; }
+    out('Found ' . count($mig) . ' migration file(s). Run them via your DB layer:');
+    foreach ($mig as $m) out('  ' . substr($m, strlen($root) + 1));
+    break;
+
+case 'help':
+default:
+    out("TiCore CLI");
+    out("  ticore addon list");
+    out("  ticore addon add <slug>");
+    out("  ticore addon remove <slug>");
+    out("  ticore key:generate");
+    out("  ticore secrets:scan");
+    out("  ticore migrate");
+    break;
+}

@@ -28,6 +28,14 @@ class Security {
         return true;
     }
 
+    // 2b. Non-fatal CSRF check (for middleware / API — returns bool instead of die()).
+    public static function csrfValid(?string $token): bool {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        return $token !== null && $token !== ''
+            && isset($_SESSION['csrf_token'])
+            && hash_equals($_SESSION['csrf_token'], $token);
+    }
+
     // 3. XSS Protection (Output Sanitization)
     public static function e(string $string): string {
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');

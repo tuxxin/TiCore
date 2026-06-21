@@ -1,0 +1,3 @@
+# Rename to ads.txt and set your own AdSense publisher ID to serve ads.
+# (ads.txt itself is gitignored so your real ID never gets committed.)
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0

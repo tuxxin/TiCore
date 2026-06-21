@@ -1,0 +1,25 @@
+{
+  "slug": "google-ecommerce",
+  "name": "TiCore Google Ecommerce",
+  "version": "1.0.0",
+  "description": "Google Merchant Center product-feed generator (RSS 2.0 + g: namespace) plus a setup guide for Merchant Center and Business Profile linkage. Ships with a sample product provider so the feed renders out of the box.",
+  "author": "tuxxin",
+  "license": "MIT",
+  "ticore": ">=2.0.0",
+  "php": ">=8.1",
+  "autoload": { "Tuxxin\\TiCore\\Addons\\GoogleEcommerce\\": "src/" },
+  "bootstrap": "Tuxxin\\TiCore\\Addons\\GoogleEcommerce\\GoogleEcommerceAddon",
+  "routes": { "web": "routes/web.php" },
+  "views": { "namespace": "google-ecommerce", "path": "views" },
+  "config": { "file": "config/google-ecommerce.php" },
+  "env": { "optional": ["MERCHANT_CURRENCY"] },
+  "files": [
+    "addon.json",
+    "config/google-ecommerce.php",
+    "src/GoogleEcommerceAddon.php",
+    "src/MerchantFeed.php",
+    "src/Controllers/FeedController.php",
+    "routes/web.php",
+    "views/setup-guide.php"
+  ]
+}

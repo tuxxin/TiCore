@@ -1,5 +1,8 @@
 RewriteEngine On
 
+# Serve the static splash for "/", fall back to the framework entrypoint.
+DirectoryIndex index.html index.php
+
 # 1. Map sitemap.xml to the sitemap feeder script
 RewriteRule ^sitemap\.xml$ sitemap.php [L]
 

@@ -1,240 +1,90 @@
-# TiCore Framework
+# TiCore — a security-first, SEO-first PHP framework (v2)
 
-**Version:** 1.25
-**PHP:** 8.4+
-**License:** MIT
-**Author:** [Tuxxin](https://tuxxin.com)
+TiCore is a lightweight PHP 8.1+ MVC micro-framework: a modern router, a drop-in
+addon ecosystem, built-in security, and a complete SEO/structured-data suite —
+with near-zero dependencies and a public/private directory split that keeps
+sensitive files out of the web root.
 
-**Live Demo:** [ticore.tuxxin.com](https://ticore.tuxxin.com)
+## Highlights (v2)
 
----
+- **Modern router** — parameterized routes (`/post/{id:\d+}`), unlimited-depth
+  catch-alls (`/docs/{path:.*}`), HTTP-method routing, **named routes** with reverse
+  URL generation, route **groups**, and a **middleware** pipeline. Backward-compatible
+  zero-config controller/view auto-discovery remains as a fallback.
+- **Addon ecosystem** — drop-in features installed with the `ticore` CLI, pulled
+  separately from the base: `auth`, `payments`, `blog-cms`, `contact-mailer`,
+  `admin-dashboard`, `rest-api-kit`, `indexnow`, `google-analytics-gsc`,
+  `google-ecommerce`, `schema-generator`.
+- **Security** — CSRF middleware, hardened sessions (HttpOnly/Secure/SameSite +
+  regeneration), security headers, traversal-guarded routing, PDO prepared
+  statements, secrets in `.env` outside the web root.
+- **SEO** — canonical, Open Graph, Twitter cards, a config-driven **JSON-LD
+  SchemaBuilder** (Organization/WebSite/WebPage + Product/Article/FAQ/…), and an
+  auto-generating sitemap.
 
-## Overview
-
-TiCore (**Tuxxin Integrated Core**) is a secure, lightweight MVC framework for PHP 8.4+. It is the **only open-source PHP
-framework with a complete SEO suite built into the layout** — canonical URLs, Open Graph,
-Twitter/X cards, Schema.org JSON-LD, og:video, og:logo, fb:app_id, Google Analytics 4, and
-auto-generating sitemap.xml, all included with zero extra packages.
-
-Application logic lives entirely **outside the public web root** — only `www/` is web-accessible.
-
-See how it compares: [ticore.tuxxin.com/compare](https://ticore.tuxxin.com/compare)
-
----
-
-## What Makes TiCore Different
-
-Every major PHP framework (Laravel, Symfony, CodeIgniter, Slim) requires third-party packages
-for SEO. TiCore builds the entire suite into the default layout — nothing to install, nothing
-to configure, nothing to forget.
-
-| Built-in Feature | TiCore | Laravel | Symfony | CodeIgniter | Slim |
-|------------------|:------:|:-------:|:-------:|:-----------:|:----:|
-| Auto canonical URL | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Open Graph (full) | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Twitter/X card | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Schema.org JSON-LD | ✅ | ❌ | ❌ | ❌ | ❌ |
-| og:video / og:logo | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Google Analytics 4 | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Auto sitemap.xml | ✅ | ⚠️ pkg | ⚠️ pkg | ⚠️ pkg | ❌ |
-| WCAG accessibility | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Zero-config pages  | ✅ | ❌ | ❌ | ❌ | ❌ |
-| SEO packages needed | **0** | ❌ | ❌ | ❌ | ❌ |
-
----
-
-## Core Features
-
-- **Security first** — CSRF tokens, XSS output escaping (`e()`), all logic outside web root
-- **Smart four-tier router** — manual → auto-controller → PageController fallback → 404
-- **Six-level logger** — CRITICAL / ERROR / WARNING / INFO / DEPRECATED / DEBUG (0–5)
-- **Complete SEO suite** — full meta, OG, Twitter/X, JSON-LD, sitemap.xml auto-generated from layout
-- **Optional PDO database** — enable with one flag; prepared statements, utf8mb4
-- **Zero-config pages** — drop a view file, get a live URL instantly via PageController
-- **WCAG accessible** — skip link, ARIA landmarks, `role` attributes in default templates
-- **Environment-aware errors** — full stack traces in development, silent in production
-
----
-
-## Directory Structure
+## Project layout
 
 ```
-project/
-├── TiCore/                       ← private (not web-accessible)
-│   ├── .env                      ← environment secrets (DB, SMTP)
-│   ├── .env-example              ← documented template
-│   ├── .v                        ← framework version
-│   ├── config.php                ← constants (SITE_LOGO, GA4_ID, FACEBOOK_URL, etc.)
-│   ├── src/
-│   │   ├── Controllers/
-│   │   │   ├── HomeController.php
-│   │   │   ├── FeaturesController.php
-│   │   │   └── PageController.php
-│   │   ├── Core/
-│   │   │   ├── Router.php
-│   │   │   ├── Logger.php
-│   │   │   ├── Database.php
-│   │   │   ├── DotEnv.php
-│   │   │   └── Security.php
-│   │   └── functions_global.php
-│   ├── templates/default/
-│   │   ├── home.php
-│   │   ├── features.php
-│   │   ├── compare.php
-│   │   ├── 404.php
-│   │   └── layouts/
-│   │       ├── header.php        ← full SEO/OG/JSON-LD/GA4/a11y layout
-│   │       └── footer.php
-│   └── logs/                     ← daily log files (app-YYYY-MM-DD.log)
-└── www/                          ← public web root
-    ├── .htaccess
-    ├── index.php
-    └── assets/
+TiCore/            framework + your app (NOT web-accessible)
+  config.php       settings (identity + secrets via .env)
+  routes/          web.php, api.php
+  src/Core/        Router, Route, Http/, Middleware/, Seo/, Security, Logger, …
+  src/Controllers/
+  templates/default/
+  addons/          installed addons land here (gitignored)
+  database/        sqlite (gitignored)
+www/               public web root: index.php, .htaccess, assets
+addons/            addon SOURCES (this repo) — installed via the CLI
+bin/ticore         CLI
 ```
 
----
-
-## Configuration
-
-### `.env` (secrets only)
-
-```env
-APP_ENV=development        # development | production
-LOG_LEVEL=3                # 0=CRITICAL  1=ERROR  2=WARNING  3=INFO  4=DEPRECATED  5=DEBUG
-DB_HOST=localhost
-DB_NAME=ticore_db
-DB_USER=ticore_user
-DB_PASS=change_me
-```
-
-### `config.php` (non-secret constants, edit directly)
-
-| Constant          | Default | Purpose                              |
-|-------------------|---------|--------------------------------------|
-| `SITE_TITLE`      | `TiCore Secure Framework` | `<title>` and JSON-LD |
-| `BASE_URL`        | `https://ticore.tuxxin.com` | Canonical URLs, OG tags |
-| `SITE_LOGO`       | `/assets/images/logo-v2.png` | Navbar, og:logo, JSON-LD |
-| `FACEBOOK_URL`    | `https://facebook.com/tuxxin` | JSON-LD Organization sameAs |
-| `GA4_ID`          | `G-9RF6FP6ZGX` | Google Analytics 4 |
-| `DB_ENABLED`      | `false` | Enable/disable PDO layer |
-| `SITEMAP_ENABLED` | `false` | Expose `/sitemap.xml` |
-
----
-
-## Adding a Page
-
-**Static page — no controller needed (PageController fallback):**
+## Quick start
 
 ```bash
-touch TiCore/templates/default/privacy.php
-# Now live at https://yoursite.com/privacy
-```
-
-Set SEO meta inside the template before the layout include:
-
-```php
-<?php
-$title            = 'Privacy Policy';
-$meta_description = 'Our privacy policy.';
-$meta_robots      = 'noindex, follow';
-?>
-<?php include 'layouts/header.php'; ?>
-```
-
-**Page with a dedicated controller:**
-
-```php
-// TiCore/src/Controllers/ContactController.php
-namespace TiCore\Controllers;
-
-class ContactController {
-    public function index(): void {
-        view('contact', [
-            'title'            => 'Contact Us',
-            'meta_description' => 'Get in touch with Tuxxin.',
-        ]);
-    }
-}
-```
-
----
-
-## SEO Layout Variables
-
-Pass any of these from your controller to `view()` — unset variables emit no tags:
-
-```php
-view('page', [
-    'title'            => 'Page Title',
-    'meta_description' => '150–160 char description',
-    'og_type'          => 'article',
-    'og_image'         => 'https://example.com/image.png',
-    'og_logo'          => 'https://example.com/logo.png',    // overrides SITE_LOGO
-    'og_video'         => 'https://example.com/video.mp4',
-    'fb_app_id'        => '816733251417750',
-    'gtm_id'           => 'GTM-XXXXXXX',
-    'google_fonts_url' => 'https://fonts.googleapis.com/css2?family=Inter&display=swap',
-]);
-```
-
-GA4 (`GA4_ID`), canonical URL, og:logo, and Schema.org JSON-LD are always generated automatically.
-
----
-
-## Requirements
-
-- PHP 8.4+
-- Apache with `mod_rewrite`
-- Composer (autoloader)
-- MySQL / MariaDB (optional)
-
----
-
-## Installation
-
-1. **Clone or download** the repository into your server directory.
-
-2. **Install Composer dependencies:**
-
-```bash
+git clone https://github.com/tuxxin/TiCore.git
 cd TiCore
-composer install
+cp TiCore/.env-example TiCore/.env   # set SITE_TITLE, BASE_URL, …
+# point your web server's docroot at www/  (Apache mod_rewrite or Nginx)
 ```
 
-3. **Create and configure the environment file:**
+Drop a view in `TiCore/templates/default/` or a controller in
+`TiCore/src/Controllers/` and it serves with zero config. Declare explicit routes
+in `TiCore/routes/web.php`.
 
-```bash
-cp TiCore/.env-example TiCore/.env
-```
-
-Then edit `TiCore/.env` and set your values:
-
-```env
-APP_ENV=production
-LOG_LEVEL=1
-DB_HOST=localhost
-DB_NAME=your_db
-DB_USER=your_user
-DB_PASS=your_password
-```
-
-4. **Update site constants** in `TiCore/config.php`:
+## Routing
 
 ```php
-define('SITE_TITLE', 'Your Site Name');
-define('BASE_URL',   'https://yoursite.com');
-define('GA4_ID',     'G-XXXXXXXXXX');
+$router->get('/blog/{slug}', 'BlogController@show')->name('blog.show');
+$router->get('/post/{id:\d+}', fn(Request $r) => Response::json(['id' => (int)$r->param('id')]));
+$router->get('/docs/{path:.*}', 'DocsController@show');          // any depth
+$router->post('/contact', 'ContactController@submit', ['csrf']); // method + middleware
+$router->group(['prefix' => 'admin', 'middleware' => ['auth']], function ($router) {
+    $router->get('/dashboard', 'Admin\DashboardController@index');
+});
+echo route('blog.show', ['slug' => 'hello']);                    // reverse URL
 ```
 
-5. **Create the logs directory** and make it writable by the web server:
+## Addons & the CLI
 
 ```bash
-mkdir -p TiCore/logs
-chmod 775 TiCore/logs
+bin/ticore addon list
+bin/ticore addon add auth        # full user accounts
+bin/ticore addon add payments    # Stripe + PayPal
+bin/ticore migrate
+bin/ticore key:generate
+bin/ticore secrets:scan          # pre-commit secret check
 ```
 
-6. **Point your web server** document root to the `www/` directory. The `TiCore/` directory must never be web-accessible.
+Addons live in `/addons/<slug>/` and are excluded from base release tarballs
+(`.gitattributes export-ignore`); the CLI fetches them on demand.
 
----
+## Security
 
-*TiCore Framework — Built by [Tuxxin](https://tuxxin.com) | [Live Demo](https://ticore.tuxxin.com)*
+CSRF (`csrf_field()` + the `csrf` middleware), hardened sessions, security headers,
+strict route validation + `realpath` traversal guard, PDO prepared statements, and
+`.env` outside the web root. A `secrets:scan` CLI command and a gitleaks CI workflow
+keep credentials out of commits.
+
+## License
+
+MIT © Tuxxin.

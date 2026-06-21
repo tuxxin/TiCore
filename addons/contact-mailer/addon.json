@@ -1,0 +1,27 @@
+{
+  "slug": "contact-mailer",
+  "name": "TiCore Contact Mailer",
+  "version": "1.0.0",
+  "description": "Contact form with honeypot anti-spam and CSRF protection; delivers messages via the MailerSend REST API. Degrades gracefully (logs a warning, still thanks the visitor) when mail is unconfigured.",
+  "author": "tuxxin",
+  "license": "MIT",
+  "ticore": ">=2.0.0",
+  "php": ">=8.1",
+  "requires_db": false,
+  "autoload": { "Tuxxin\\TiCore\\Addons\\ContactMailer\\": "src/" },
+  "bootstrap": "Tuxxin\\TiCore\\Addons\\ContactMailer\\ContactMailerAddon",
+  "routes": { "web": "routes/web.php" },
+  "views": { "namespace": "contact-mailer", "path": "views" },
+  "config": { "file": "config/contact-mailer.php" },
+  "env": { "optional": ["MAILERSEND_API_KEY", "MAILERSEND_FROM_EMAIL", "CONTACT_EMAIL"] },
+  "files": [
+    "addon.json",
+    "config/contact-mailer.php",
+    "src/Mailer.php",
+    "src/ContactMailerAddon.php",
+    "src/Controllers/ContactController.php",
+    "routes/web.php",
+    "views/contact.php",
+    "views/thanks.php"
+  ]
+}

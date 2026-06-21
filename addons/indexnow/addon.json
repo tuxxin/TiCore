@@ -1,0 +1,25 @@
+{
+  "slug": "indexnow",
+  "name": "TiCore IndexNow",
+  "version": "1.0.0",
+  "description": "IndexNow integration: serves the verification key file and submits site URLs (incl. the sitemap) to the IndexNow API for instant search-engine indexing.",
+  "author": "tuxxin",
+  "license": "MIT",
+  "ticore": ">=2.0.0",
+  "php": ">=8.1",
+  "autoload": { "Tuxxin\\TiCore\\Addons\\Indexnow\\": "src/" },
+  "bootstrap": "Tuxxin\\TiCore\\Addons\\Indexnow\\IndexnowAddon",
+  "routes": { "web": "routes/web.php" },
+  "views": { "namespace": "indexnow", "path": "views" },
+  "config": { "file": "config/indexnow.php" },
+  "env": { "optional": ["INDEXNOW_KEY"] },
+  "files": [
+    "addon.json",
+    "config/indexnow.php",
+    "src/IndexnowAddon.php",
+    "src/IndexNow.php",
+    "src/Controllers/IndexNowController.php",
+    "routes/web.php",
+    "views/admin.php"
+  ]
+}

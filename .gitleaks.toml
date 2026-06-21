@@ -1,0 +1,45 @@
+title = "TiCore gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "adsense-pub-id"
+description = "Google AdSense publisher ID"
+regex = '''ca-pub-[0-9]{16}'''
+
+[[rules]]
+id = "ga4-measurement-id"
+description = "GA4 Measurement ID"
+regex = '''G-[A-Z0-9]{10}'''
+
+[[rules]]
+id = "stripe-live-key"
+description = "Stripe live secret/restricted key"
+regex = '''(sk|rk)_live_[0-9a-zA-Z]{20,}'''
+
+[[rules]]
+id = "stripe-webhook-secret"
+description = "Stripe webhook signing secret"
+regex = '''whsec_[0-9a-zA-Z]{20,}'''
+
+[[rules]]
+id = "google-sa-private-key"
+description = "Google service-account private key block"
+regex = '''"private_key"\s*:\s*"-----BEGIN'''
+
+[allowlist]
+description = "Ignore documented placeholders + examples"
+paths = [
+  '''\.env-example''',
+  '''.*\.example$''',
+  '''README\.md''',
+  '''\.gitleaks\.toml''',
+]
+regexes = [
+  '''ca-pub-XXXXXXXXXXXXXXXX''',
+  '''pub-XXXXXXXXXXXXXXXX''',
+  '''G-XXXXXXXXXX''',
+  '''sk_test_''',
+  '''pk_test_''',
+]

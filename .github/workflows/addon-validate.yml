@@ -1,0 +1,38 @@
+name: addon-validate
+
+on:
+  push:
+    paths: ['addons/**']
+  pull_request:
+    paths: ['addons/**']
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+      - name: Validate addon manifests + files[]
+        run: |
+          php -r '
+          $fail = 0;
+          foreach (glob("addons/*/addon.json") as $mf) {
+              $dir = dirname($mf); $slug = basename($dir);
+              $m = json_decode(@file_get_contents($mf), true);
+              if (!is_array($m)) { echo "INVALID JSON: $mf\n"; $fail = 1; continue; }
+              if (($m["slug"] ?? "") !== $slug) { echo "slug != dir: $mf\n"; $fail = 1; }
+              if (empty($m["bootstrap"])) { echo "no bootstrap: $mf\n"; $fail = 1; }
+              foreach (($m["files"] ?? []) as $f) {
+                  if (!is_file("$dir/$f")) { echo "missing file listed in files[]: $dir/$f\n"; $fail = 1; }
+              }
+          }
+          echo $fail ? "addon-validate: FAIL\n" : "addon-validate: ok\n";
+          exit($fail);
+          '
+      - name: php -l all addon PHP
+        run: |
+          set -e
+          find addons -name "*.php" -print0 | xargs -0 -n1 php -l > /dev/null
+          echo "php -l: all addon files OK"

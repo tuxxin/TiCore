@@ -1,0 +1,28 @@
+{
+  "slug": "google-analytics-gsc",
+  "name": "TiCore Google Analytics + Search Console",
+  "version": "1.0.0",
+  "description": "Read-only SEO dashboard: pulls last-28-day Search Console clicks/impressions and GA4 sessions via a Google service-account (RS256 JWT, no SDK). Includes a setup guide.",
+  "author": "tuxxin",
+  "license": "MIT",
+  "ticore": ">=2.0.0",
+  "php": ">=8.1",
+  "autoload": { "Tuxxin\\TiCore\\Addons\\GoogleAnalyticsGsc\\": "src/" },
+  "bootstrap": "Tuxxin\\TiCore\\Addons\\GoogleAnalyticsGsc\\GoogleAnalyticsGscAddon",
+  "routes": { "web": "routes/web.php" },
+  "views": { "namespace": "google-analytics-gsc", "path": "views" },
+  "config": { "file": "config/google-analytics-gsc.php" },
+  "env": { "optional": ["GOOGLE_APPLICATION_CREDENTIALS", "GA4_PROPERTY_ID", "GSC_SITE"] },
+  "files": [
+    "addon.json",
+    "config/google-analytics-gsc.php",
+    "src/GoogleAnalyticsGscAddon.php",
+    "src/GoogleAuth.php",
+    "src/GscClient.php",
+    "src/Ga4Client.php",
+    "src/Controllers/SeoStatsController.php",
+    "routes/web.php",
+    "views/stats.php",
+    "views/setup-guide.php"
+  ]
+}

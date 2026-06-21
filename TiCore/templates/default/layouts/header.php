@@ -30,7 +30,7 @@
 //
 // TWITTER / X
 //   $twitter_card       string   'summary_large_image' | 'summary'  (default: summary_large_image)
-//   $twitter_site       string   @handle for the site account   (default: @tuxxin)
+//   $twitter_site       string   @handle for the site account   (default: none)
 //
 // THIRD-PARTY PRECONNECTS / INTEGRATIONS
 //   $google_fonts_url   string   Full Google Fonts <link href> URL — emits preconnects + link
@@ -46,7 +46,7 @@ $_tcPageTitle   = isset($title) && $title !== ''
 
 $_tcDescription = isset($meta_description) && $meta_description !== ''
     ? htmlspecialchars($meta_description, ENT_QUOTES, 'UTF-8')
-    : 'TiCore is a secure, lightweight PHP 8.4+ MVC framework by Tuxxin — fast routing, CSRF/XSS protection, and structured logging out of the box.';
+    : 'TiCore is a secure, lightweight PHP 8.4+ MVC framework — fast routing, CSRF/XSS protection, and structured logging out of the box.';
 
 $_tcRobots      = isset($meta_robots) ? $meta_robots : 'index, follow';
 $_tcOgType      = isset($og_type)     ? $og_type     : 'website';
@@ -64,7 +64,7 @@ $_tcOgImageAlt    = isset($og_image_alt)    && $og_image_alt    !== '' ? htmlspe
 
 // Twitter
 $_tcTwitterCard = isset($twitter_card) && $twitter_card !== '' ? $twitter_card : 'summary_large_image';
-$_tcTwitterSite = isset($twitter_site) && $twitter_site !== '' ? $twitter_site : '@tuxxin';
+$_tcTwitterSite = isset($twitter_site) && $twitter_site !== '' ? $twitter_site : '';
 
 // Site logo, Facebook URL, GA4 (from config constants)
 $_tcSiteLogo    = defined('SITE_LOGO')    && SITE_LOGO    !== '' ? SITE_LOGO    : '';
@@ -85,19 +85,6 @@ $_tcNavAttrs = static function (string $href) use ($_tcCurrentPath): string {
 // Escape helper (shorthand for this file)
 $_e = static fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 
-// ── Tuxxin Suite nav — fetched from JSON, cached 1 hour ──────────────────────
-$_tcSuiteCache = sys_get_temp_dir() . '/tuxxin_suite_nav.json';
-$_tcSuiteItems = [];
-if (file_exists($_tcSuiteCache) && (time() - filemtime($_tcSuiteCache)) < 3600) {
-    $_tcSuiteItems = json_decode(file_get_contents($_tcSuiteCache), true) ?: [];
-} else {
-    $_tcSuiteCtx = stream_context_create(['http' => ['timeout' => 3]]);
-    $_tcSuiteRaw = @file_get_contents('https://tuxxin.com/tuxxin_suite.json', false, $_tcSuiteCtx);
-    if ($_tcSuiteRaw) {
-        $_tcSuiteItems = json_decode($_tcSuiteRaw, true) ?: [];
-        file_put_contents($_tcSuiteCache, $_tcSuiteRaw);
-    }
-}
 $_tcNavItemAttrs = static function (array $attrs): string {
     return implode(' ', array_map(
         fn($k, $v) => htmlspecialchars($k, ENT_QUOTES, 'UTF-8') . '="' . htmlspecialchars($v, ENT_QUOTES, 'UTF-8') . '"',
@@ -155,7 +142,7 @@ $_tcNavItemAttrs = static function (array $attrs): string {
     <title><?php echo $_tcPageTitle; ?></title>
     <meta name="description" content="<?php echo $_tcDescription; ?>">
     <meta name="robots"      content="<?php echo $_e($_tcRobots); ?>">
-    <meta name="author"      content="Tuxxin — tuxxin.com">
+    <meta name="author"      content="TiCore">
     <meta name="generator"   content="TiCore">
     <meta name="theme-color" content="#212529">
 
@@ -212,40 +199,20 @@ $_tcNavItemAttrs = static function (array $attrs): string {
     <!-- ── Structured data (Schema.org JSON-LD) ─────────────────────────── -->
     <script type="application/ld+json">
     <?php
-    $_tcLd_org = [
-        '@type' => 'Organization',
-        '@id'   => 'https://tuxxin.com/#organization',
-        'name'  => 'Tuxxin',
-        'url'   => 'https://tuxxin.com',
-    ];
-    if ($_tcSiteLogo !== '') {
-        $_tcLd_org['logo'] = ['@type' => 'ImageObject', 'url' => $_tcSiteLogo, 'width' => 306, 'height' => 338];
-    }
-    if ($_tcFacebookUrl !== '') {
-        $_tcLd_org['sameAs'] = [$_tcFacebookUrl];
-    }
-    echo json_encode([
-        '@context' => 'https://schema.org',
-        '@graph'   => [
-            [
-                '@type'       => 'WebSite',
-                '@id'         => $_tcBaseUrl . '/#website',
-                'name'        => $_tcSiteName,
-                'url'         => $_tcBaseUrl,
-                'description' => html_entity_decode($_tcDescription, ENT_QUOTES, 'UTF-8'),
-            ],
-            $_tcLd_org,
-            [
-                '@type'       => 'WebPage',
-                '@id'         => $_tcCanonical . '#webpage',
-                'url'         => $_tcCanonical,
-                'name'        => html_entity_decode($_tcPageTitle, ENT_QUOTES, 'UTF-8'),
-                'description' => html_entity_decode($_tcDescription, ENT_QUOTES, 'UTF-8'),
-                'isPartOf'    => ['@id' => $_tcBaseUrl . '/#website'],
-                'publisher'   => ['@id' => 'https://tuxxin.com/#organization'],
-            ],
-        ],
-    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    // Config-driven structured data via SchemaBuilder (org identity comes from
+    // SITE_ORG_* config constants — neutral defaults, no hardcoded identity).
+    // Per-page nodes (Product/Article/FAQ/…) can be passed via $structured_data.
+    require_once CORE_PATH . '/src/Core/Seo/SchemaBuilder.php';
+    echo \TiCore\Core\Seo\SchemaBuilder::script([
+        'baseUrl'     => $_tcBaseUrl,
+        'siteName'    => $_tcSiteName,
+        'canonical'   => $_tcCanonical,
+        'pageTitle'   => html_entity_decode($_tcPageTitle, ENT_QUOTES, 'UTF-8'),
+        'description' => html_entity_decode($_tcDescription, ENT_QUOTES, 'UTF-8'),
+        'logo'        => $_tcSiteLogo,
+        'facebook'    => $_tcFacebookUrl,
+        'extra'       => (isset($structured_data) && is_array($structured_data)) ? $structured_data : [],
+    ]);
     ?>
     </script>
 
@@ -265,10 +232,6 @@ $_tcNavItemAttrs = static function (array $attrs): string {
     <?php if (isset($google_fonts_url) && $google_fonts_url !== ''): ?>
     <link href="<?php echo $_e($google_fonts_url); ?>" rel="stylesheet">
     <?php endif; ?>
-
-    <!-- ── Google AdSense ───────────────────────────────────────────────── -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8156109007911677"
-     crossorigin="anonymous"></script>
 
 </head>
 <body>
@@ -320,57 +283,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <a <?php echo $_tcNavAttrs('/'); ?> href="/">Home</a>
                     </li>
                     <li class="nav-item" role="listitem">
-                        <a <?php echo $_tcNavAttrs('/features'); ?> href="/features">Features</a>
-                    </li>
-                    <li class="nav-item" role="listitem">
-                        <a <?php echo $_tcNavAttrs('/compare'); ?> href="/compare">Compare</a>
-                    </li>
-                    <li class="nav-item" role="listitem">
-                        <button type="button" class="nav-link"
-                                data-bs-toggle="modal"
-                                data-bs-target="#tcGithubModal"
-                                aria-haspopup="dialog"
-                                aria-label="View TiCore on GitHub">
-                            GitHub
-                        </button>
-                    </li>
-                    <li class="nav-item dropdown" role="listitem">
-                        <a class="nav-link dropdown-toggle"
-                           href="#"
-                           id="tuxxinSuiteDropdown"
-                           role="button"
-                           data-bs-toggle="dropdown"
-                           aria-expanded="false">
-                            Tuxxin Suite
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="tuxxinSuiteDropdown">
-                            <?php foreach ($_tcSuiteItems as $_tcSuiteItem): ?>
-                                <?php if (($_tcSuiteItem['type'] ?? '') === 'divider'): ?>
-                                    <li><hr class="dropdown-divider"></li>
-                                <?php elseif (($_tcSuiteItem['type'] ?? '') === 'link'): ?>
-                                    <?php
-                                    $_tcSuiteAttrs     = $_tcSuiteItem['attributes'] ?? [];
-                                    $_tcSuiteHref      = htmlspecialchars($_tcSuiteItem['href'] ?? '#', ENT_QUOTES, 'UTF-8');
-                                    $_tcSuiteText      = htmlspecialchars(html_entity_decode($_tcSuiteItem['text'] ?? '', ENT_HTML5, 'UTF-8'), ENT_QUOTES, 'UTF-8');
-                                    $_tcSuiteIsCurrent = rtrim($_tcSuiteItem['href'] ?? '', '/') === rtrim($_tcBaseUrl, '/');
-                                    if ($_tcSuiteIsCurrent) {
-                                        $_tcSuiteAttrs['class'] = 'dropdown-item active';
-                                        unset($_tcSuiteAttrs['target'], $_tcSuiteAttrs['rel']);
-                                        $_tcSuiteHref = '/';
-                                    }
-                                    ?>
-                                    <li>
-                                        <a <?= $_tcNavItemAttrs($_tcSuiteAttrs) ?> href="<?= $_tcSuiteHref ?>">
-                                            <?= $_tcSuiteText ?>
-                                            <?php if ($_tcSuiteIsCurrent): ?><span class="visually-hidden">(current)</span><?php endif; ?>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                            <?php if (empty($_tcSuiteItems)): ?>
-                                <li><a class="dropdown-item" href="https://tuxxin.com" target="_blank" rel="noopener noreferrer">Back to Tuxxin.com &rarr;</a></li>
-                            <?php endif; ?>
-                        </ul>
+                        <a class="nav-link" href="https://github.com/tuxxin/TiCore"
+                           target="_blank" rel="noopener noreferrer">GitHub</a>
                     </li>
                 </ul>
             </div>

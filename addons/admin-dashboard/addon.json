@@ -1,0 +1,25 @@
+{
+  "slug": "admin-dashboard",
+  "name": "TiCore Admin Dashboard",
+  "version": "1.0.0",
+  "description": "Dark admin dashboard shell: shows the logged-in user, PHP version, and all installed addons, with a reusable layout other admin pages can match.",
+  "author": "tuxxin",
+  "license": "MIT",
+  "ticore": ">=2.0.0",
+  "php": ">=8.1",
+  "requires_db": false,
+  "autoload": { "Tuxxin\\TiCore\\Addons\\AdminDashboard\\": "src/" },
+  "bootstrap": "Tuxxin\\TiCore\\Addons\\AdminDashboard\\AdminDashboardAddon",
+  "routes": { "web": "routes/web.php" },
+  "views": { "namespace": "admin-dashboard", "path": "views" },
+  "config": { "file": "config/admin-dashboard.php" },
+  "env": { "optional": [] },
+  "files": [
+    "addon.json",
+    "config/admin-dashboard.php",
+    "src/AdminDashboardAddon.php",
+    "src/Controllers/DashboardController.php",
+    "routes/web.php",
+    "views/dashboard.php"
+  ]
+}

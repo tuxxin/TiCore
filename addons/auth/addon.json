@@ -1,0 +1,33 @@
+{
+  "slug": "auth",
+  "name": "TiCore Auth",
+  "version": "1.0.0",
+  "description": "Full user accounts: register, login, logout, account, hardened sessions, roles, guest/auth middleware. SQLite-backed (self-contained).",
+  "author": "tuxxin",
+  "license": "MIT",
+  "ticore": ">=2.0.0",
+  "php": ">=8.1",
+  "requires_db": false,
+  "autoload": { "Tuxxin\\TiCore\\Addons\\Auth\\": "src/" },
+  "bootstrap": "Tuxxin\\TiCore\\Addons\\Auth\\AuthAddon",
+  "routes": { "web": "routes/web.php" },
+  "middleware": {
+    "guest": "Tuxxin\\TiCore\\Addons\\Auth\\Middleware\\GuestOnly",
+    "auth": "TiCore\\Core\\Middleware\\AuthMiddleware"
+  },
+  "views": { "namespace": "auth", "path": "views" },
+  "config": { "file": "config/auth.php" },
+  "env": { "optional": ["AUTH_DB_PATH"] },
+  "files": [
+    "addon.json",
+    "config/auth.php",
+    "src/Auth.php",
+    "src/AuthAddon.php",
+    "src/Controllers/AuthController.php",
+    "src/Middleware/GuestOnly.php",
+    "routes/web.php",
+    "views/login.php",
+    "views/register.php",
+    "views/account.php"
+  ]
+}

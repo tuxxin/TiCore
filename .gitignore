@@ -1,33 +1,47 @@
-# Sensitive Files
+# ── Secrets / environment ───────────────────────────────────────────────
 .env
+.env.*
+!.env-example
+*.pem
+*.key
+*-private-key*
+service-account*.json
+client_secret*.json
+credentials.json
+
+# ── Logs ────────────────────────────────────────────────────────────────
 *.log
 logs/
-.gitconfig
-.git/
+TiCore/logs/
+php_errors.log
 
-# System/Tooling Clutter
-.bash_history
-.bash_logout
-.bashrc
-.cache/
-.claude/
-.config/
-.copilot/
-.dotnet/
-.local/
-.profile
-.ssh/
-.vscode-server/
-.wget-hsts
-.claude.json
-ticore.tuxxin.com.code-workspace
+# ── Databases / data / uploads ──────────────────────────────────────────
+*.sqlite
+*.sqlite3
+*.db
+TiCore/database/
+TiCore/storage/
+www/uploads/
 
-# OS Files
-.DS_Store
-Thumbs.db
+# ── Installed addons (source lives in /addons; installs land in TiCore/addons) ──
+TiCore/addons/
+www/assets/addons/
 
-# PHP / Composer
+# ── Dependencies / build ────────────────────────────────────────────────
 vendor/
+node_modules/
 .phpunit.result.cache
 .php_cs.cache
-php_errors.log
+
+# ── Temp / OS / editor ──────────────────────────────────────────────────
+/tmp/
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+.vscode-server/
+.cache/
+.claude/
+.claude.json
+*.code-workspace

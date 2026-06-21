@@ -1,0 +1,30 @@
+{
+  "slug": "blog-cms",
+  "name": "TiCore Blog CMS",
+  "version": "1.0.0",
+  "description": "Self-contained SQLite blog: public listing + single post + category pages, and an auth-protected admin for create/edit/delete with safe markdown rendering.",
+  "author": "tuxxin",
+  "license": "MIT",
+  "ticore": ">=2.0.0",
+  "php": ">=8.1",
+  "requires_db": false,
+  "autoload": { "Tuxxin\\TiCore\\Addons\\BlogCms\\": "src/" },
+  "bootstrap": "Tuxxin\\TiCore\\Addons\\BlogCms\\BlogCmsAddon",
+  "routes": { "web": "routes/web.php" },
+  "views": { "namespace": "blog-cms", "path": "views" },
+  "config": { "file": "config/blog-cms.php" },
+  "env": { "optional": ["BLOGCMS_DB_PATH"] },
+  "files": [
+    "addon.json",
+    "config/blog-cms.php",
+    "src/Blog.php",
+    "src/BlogCmsAddon.php",
+    "src/Controllers/BlogController.php",
+    "src/Controllers/BlogAdminController.php",
+    "routes/web.php",
+    "views/list.php",
+    "views/post.php",
+    "views/admin-list.php",
+    "views/admin-form.php"
+  ]
+}

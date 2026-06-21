@@ -4,7 +4,8 @@ namespace TiCore\Core;
 class DotEnv {
     public static function load($path) {
         if (!file_exists($path)) {
-            throw new \Exception("The .env file is missing.");
+            // .env is optional — fall back to real environment variables + config defaults.
+            return;
         }
 
         $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

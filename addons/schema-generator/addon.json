@@ -1,0 +1,24 @@
+{
+  "slug": "schema-generator",
+  "name": "TiCore Schema.org Generator",
+  "version": "1.0.0",
+  "description": "Stateless JSON-LD (schema.org) generator: a hosted form that builds an escaped <script type=\"application/ld+json\"> block and a copy-paste PHP config snippet from posted fields. Zero persistence — nothing is stored, written, or logged.",
+  "author": "tuxxin",
+  "license": "MIT",
+  "ticore": ">=2.0.0",
+  "php": ">=8.1",
+  "autoload": { "Tuxxin\\TiCore\\Addons\\SchemaGenerator\\": "src/" },
+  "bootstrap": "Tuxxin\\TiCore\\Addons\\SchemaGenerator\\SchemaGeneratorAddon",
+  "routes": { "web": "routes/web.php" },
+  "views": { "namespace": "schema-generator", "path": "views" },
+  "config": { "file": "config/schema-generator.php" },
+  "env": { "optional": [] },
+  "files": [
+    "addon.json",
+    "config/schema-generator.php",
+    "src/SchemaGeneratorAddon.php",
+    "src/Controllers/SchemaController.php",
+    "routes/web.php",
+    "views/form.php"
+  ]
+}
