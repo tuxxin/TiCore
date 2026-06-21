@@ -31,6 +31,7 @@ regex = '''"private_key"\s*:\s*"-----BEGIN'''
 [allowlist]
 description = "Ignore documented placeholders + examples"
 paths = [
+  '''(^|/)\.git/''',
   '''\.env-example''',
   '''.*\.example$''',
   '''README\.md''',
