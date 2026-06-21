@@ -1,16 +1,22 @@
 {
     "name": "tuxxin/ti-core",
-    "description": "PHP Framework",
+    "description": "TiCore — a security-first, SEO-first PHP MVC micro-framework: modern router, drop-in addon system, CLI, near-zero dependencies.",
     "type": "library",
+    "license": "MIT",
+    "keywords": ["framework", "mvc", "router", "php", "middleware", "security", "seo", "addons"],
+    "homepage": "https://ticore.tuxxin.com",
+    "authors": [
+        {
+            "name": "tuxxin",
+            "homepage": "https://tuxxin.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
     "autoload": {
         "psr-4": {
             "Tuxxin\\TiCore\\": "src/"
         }
-    },
-    "authors": [
-        {
-            "name": "tuxxin"
-        }
-    ],
-    "require": {}
+    }
 }
